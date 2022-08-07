@@ -1,6 +1,8 @@
 /**
  * This file is the manager of all threads, which follows from the name of the class.
  * Just include it in to take full advantage of multithreading!
+ * 
+ * @author N3WC0DER
  */
 
 #pragma once

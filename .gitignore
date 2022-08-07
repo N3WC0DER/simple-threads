@@ -2,11 +2,13 @@ build/CMakeCache.txt
 build/CMakeFiles/*
 build/Makefile
 build/cmake_install.cmake
-build/libsimple-threads.a
+build/bin/libsimple-threads.a
+build/bin/example-simple-threads
 build/simple-threads
-src/tests/*
+example/bin/include/*
+example/bin/libsimple-threads.a
 example/build/CMakeCache.txt
 example/build/CMakeFiles/*
 example/build/Makefile
 example/build/cmake_install.cmake
-example/build/example-simple-threads
+example/build/bin/example-simple-threads

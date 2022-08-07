@@ -1,6 +1,8 @@
 /**
  * This file contains examples of using ThreadManager.
  * They use most of the variants of functions, lambda functions and functors.
+ * 
+ * @author N3WC0DER
  */
 
 #include <iostream>
