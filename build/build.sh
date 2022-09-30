@@ -36,7 +36,7 @@ mkdir ../example/bin 2>/dev/null
 mkdir ../example/bin/include 2>/dev/null
 
 cp -f ./libsimple-threads.a ../example/bin/ 
-cp -f ./libsimple-threads.a ./bin/
+mv -f ./libsimple-threads.a ./bin/
 
 mkdir ../example/bin/include 2>/dev/null
 cp -r ../src/* ../example/bin/include/

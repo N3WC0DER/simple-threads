@@ -4,7 +4,6 @@ build/Makefile
 build/cmake_install.cmake
 build/bin/libsimple-threads.a
 build/bin/example-simple-threads
-build/simple-threads
 example/bin/include/*
 example/bin/libsimple-threads.a
 example/build/CMakeCache.txt
