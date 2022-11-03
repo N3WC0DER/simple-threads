@@ -10,6 +10,7 @@
 #include <vector>
 #include <thread>
 #include <future>
+#include <functional>
 
 namespace sth {
 /** Pattern: Singleton */
@@ -65,13 +66,12 @@ public:
 	 */
 	template <typename Func, typename... Args>
 	auto addTask (Func&& func, Args&&... args) -> std::future<std::invoke_result_t<Func, Args...>> {
-	  using returnType = std::invoke_result_t<Func, Args...>;
-	  auto task = std::make_shared<std::packaged_task<returnType()>>(
-	              std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
-	
-	  this->addToQueue([task] () { (*task)(); });
-	
-	  return task->get_future();
+        using returnType = std::invoke_result_t<Func, Args...>;
+        auto task = std::make_shared<std::packaged_task<returnType()>>(
+                std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
+
+        this->addToQueue([task] () { (*task)(); });
+        return task->get_future();
 	}
 };
 

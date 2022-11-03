@@ -8,7 +8,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "ThreadManager.h"
+#include "simple-threads/ThreadManager.h"
 
 using namespace sth;
 

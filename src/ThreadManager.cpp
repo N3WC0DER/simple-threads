@@ -1,4 +1,4 @@
-#include "ThreadManager.h"
+#include "simple-threads/ThreadManager.h"
 
 using namespace sth;
 
@@ -7,13 +7,12 @@ std::unique_ptr<ThreadManager> ThreadManager::instance = nullptr;
 ThreadManager::ThreadManager(size_t threadCount) {
 	if (threadCount <= 0 || threadCount > std::thread::hardware_concurrency())
 			throw std::runtime_error("The number of threads out of range");
-	
+
 	this->enabled = true;
-	
 	// Creating and launch all threads
 	this->threads = new std::thread*[threadCount];
 	this->threadCount = threadCount;
-	for (int i = 0; i < threadCount; i++) {
+	for (size_t i = 0; i < threadCount; i++) {
 		this->threads[i] = new std::thread(&ThreadManager::run, this);
 	}
 	
