@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.6.0)
+project(simple-threads-docs)
+
+find_package(Doxygen)
+
+if (Doxygen_FOUND)
+    if (NOT STH_DOXYGEN_LANGUAGE)
+        set(STH_DOXYGEN_LANGUAGE English)
+    endif()
+    message(STATUS "Doxygen documentation will be generated in ${STH_DOXYGEN_LANGUAGE}")
+    configure_file(Doxyfile.in Doxyfile)
+    add_custom_target(doc COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+endif ()

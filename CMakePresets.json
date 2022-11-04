@@ -1,0 +1,100 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 6,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "description": "Default build using Ninja generator",
+      "generator": "Ninja"
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "inherits": "default",
+      "description": "Debug build using Ninja generator",
+      "binaryDir": "${sourceDir}/cmake/debug",
+      "cacheVariables": {
+        "STH_BUILD_EXAMPLES": "ON",
+        "STH_GENERATE_DOCS": "OFF",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "win-debug",
+      "inherits": "debug",
+      "displayName": "Win | Debug",
+      "description": "This debug build is only available on Windows",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "linux-debug",
+      "inherits": "debug",
+      "displayName": "Linux | Debug",
+      "description": "This debug build is only available on Linux",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "inherits": "default",
+      "description": "Release build using Ninja generator",
+      "binaryDir": "${sourceDir}/cmake/release",
+      "cacheVariables": {
+        "STH_BUILD_EXAMPLES": "OFF",
+        "STH_GENERATE_DOCS": "OFF",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "win-release",
+      "inherits": "release",
+      "displayName": "Win | Release",
+      "description": "This release build is only available on Windows",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "linux-release",
+      "inherits": "release",
+      "displayName": "Linux | Release",
+      "description": "This release build is only available on Linux",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "docs",
+      "displayName": "Docs Config",
+      "description": "Default docs config using Doxygen",
+      "binaryDir": "${sourceDir}/cmake/docs",
+      "cacheVariables": {
+        "STH_BUILD_EXAMPLES": "OFF",
+        "STH_GENERATE_DOCS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    }
+  ]
+}
