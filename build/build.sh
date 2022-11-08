@@ -1,11 +1,13 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 while [ -n "$1" ]
 do
   case "$1" in 
     --examples) example=true ;;
-    --help) echo "To build ONLY the library, just type \033[36m./build.sh\033[0m.\nTo build examples, type \033[36m./build.sh --examples\033[0m (Examples are built with the library)"
+    --help) echo "To build ONLY the library, just type ./build.sh"
+        echo "To build examples, type ./build.sh --examples (Examples are built with the library)"
       exit 1 ;;
-    *) echo "To build ONLY the library, just type \033[36m./build.sh\033[0m.\nTo build examples, type \033[36m./build.sh --examples\033[0m (Examples are built with the library)"
+    *) echo "To build ONLY the library, just type ./build.sh"
+        echo "To build examples, type ./build.sh --examples (Examples are built with the library)"
       exit 1 ;;
 esac
 shift
