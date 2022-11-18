@@ -41,9 +41,9 @@
       "displayName": "Linux | Debug",
       "description": "This debug build is only available on Linux",
       "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
+        "type": "inList",
+        "string": "${hostSystemName}",
+        "list": ["Linux", "Android"]
       }
     },
     {
@@ -75,9 +75,9 @@
       "displayName": "Linux | Release",
       "description": "This release build is only available on Linux",
       "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
+        "type": "inList",
+        "string": "${hostSystemName}",
+        "list": ["Linux", "Android"]
       }
     },
     {
@@ -85,16 +85,12 @@
       "displayName": "Docs Config",
       "description": "Default docs config using Doxygen",
       "binaryDir": "${sourceDir}/cmake/docs",
+	  "generator": "Ninja",
       "cacheVariables": {
         "STH_BUILD_EXAMPLES": "OFF",
         "STH_GENERATE_DOCS": "ON"
       }
     }
   ],
-  "buildPresets": [
-    {
-      "name": "default",
-      "configurePreset": "default"
-    }
-  ]
+  "buildPresets": []
 }

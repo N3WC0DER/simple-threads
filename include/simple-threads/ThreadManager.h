@@ -11,6 +11,8 @@
 #include <thread>
 #include <future>
 #include <functional>
+#include <memory>
+#include <type_traits>
 
 namespace sth {
 /** Pattern: Singleton */
