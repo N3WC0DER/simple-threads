@@ -14,7 +14,6 @@
     },
     {
       "name": "debug",
-      "hidden": true,
       "inherits": "default",
       "description": "Debug build using Ninja generator",
       "binaryDir": "${sourceDir}/cmake/debug",
@@ -25,30 +24,7 @@
       }
     },
     {
-      "name": "win-debug",
-      "inherits": "debug",
-      "displayName": "Win | Debug",
-      "description": "This debug build is only available on Windows",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      }
-    },
-    {
-      "name": "linux-debug",
-      "inherits": "debug",
-      "displayName": "Linux | Debug",
-      "description": "This debug build is only available on Linux",
-      "condition": {
-        "type": "inList",
-        "string": "${hostSystemName}",
-        "list": ["Linux", "Android"]
-      }
-    },
-    {
       "name": "release",
-      "hidden": true,
       "inherits": "default",
       "description": "Release build using Ninja generator",
       "binaryDir": "${sourceDir}/cmake/release",
@@ -56,28 +32,6 @@
         "STH_BUILD_EXAMPLES": "OFF",
         "STH_GENERATE_DOCS": "OFF",
         "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "win-release",
-      "inherits": "release",
-      "displayName": "Win | Release",
-      "description": "This release build is only available on Windows",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      }
-    },
-    {
-      "name": "linux-release",
-      "inherits": "release",
-      "displayName": "Linux | Release",
-      "description": "This release build is only available on Linux",
-      "condition": {
-        "type": "inList",
-        "string": "${hostSystemName}",
-        "list": ["Linux", "Android"]
       }
     },
     {
