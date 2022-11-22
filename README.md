@@ -16,7 +16,7 @@
 
 ## Build
 
-To build, you need the latest versions of Git, CMake, Ninja, and any compiler of your choice (MinGW, GCC, etc.)
+> To build, you need the latest versions of Git, CMake, Ninja, and any compiler of your choice (MinGW, GCC, etc.)
 
 ```shell
 git clone https://github.com/N3WC0DER/simple-threads.git
@@ -35,11 +35,11 @@ ninja -C ./cmake/<preset name>/
 
 The library file will be located along the path `./cmake/<preset name>/libsimple-threads.a`
 
-Warning: The Debug preset generates an executable for examples.
-	
-If you don't want this, add the `-DSTH_BUILD_EXAMPLES=OFF` flag to the CMake file generation step.
-	
-The docs preset does NOT build executable files, only documentation files.
+> Warning: The Debug preset generates an executable for examples.
+> 	
+> If you don't want this, add the `-DSTH_BUILD_EXAMPLES=OFF` flag to the CMake file generation step.
+> 	
+> The docs preset does NOT build executable files, only documentation files.
 
 ## Contributing
 
