@@ -1,22 +1,19 @@
-#include "ThreadManager.h"
-#include <iostream>
+#include "simple-threads/ThreadManager.h"
 
 using namespace sth;
 
 std::unique_ptr<ThreadManager> ThreadManager::instance = nullptr;
 
-ThreadManager::ThreadManager(size_t thread_count) {
-	if (thread_count <= 0 || thread_count > MAXIMUM_THREAD_COUNT)
-			throw std::out_of_range("The number of threads out of range");
-	
-	this->enabled.store(true);
-	
-	// Creating and launch all threads
-	this->thread_count.store(thread_count);
+ThreadManager::ThreadManager(size_t threadCount) {
+	if (threadCount <= 0 || threadCount > std::thread::hardware_concurrency())
+			throw std::runtime_error("The number of threads out of range");
 
-	for (size_t i = 0; i < thread_count; i++) {
-		auto temp = std::thread(&ThreadManager::run, this);
-		this->thread_pool.push_back( std::move(temp));
+	this->enabled = true;
+	// Creating and launch all threads
+	this->threads = new std::thread*[threadCount];
+	this->threadCount = threadCount;
+	for (size_t i = 0; i < threadCount; i++) {
+		this->threads[i] = new std::thread(&ThreadManager::run, this);
 	}
 	
 	printf("ThreadManager started\n");
@@ -91,25 +88,4 @@ void ThreadManager::run() {
 		
 		task.func();
 	}
-}
-
-Task ThreadManager::get_task() {
-	std::unique_lock<std::mutex> lock(this->mutex_pool);
-		
-	// Waiting for notification
-	if (this->task_pool.empty())
-		this->cv_pool.wait(lock, [this] () -> bool { return !this->task_pool.empty() || !this->enabled.load(); });
-	
-	auto task = std::move(this->task_pool.top());
-	this->task_pool.pop();
-	lock.unlock();
-	return task;
-}
-
-void ThreadManager::clear_queue() {
-	std::queue<Task> temp_pool;
-
-	this->mutex_pool.lock();
-	this->task_pool = std::priority_queue<Task> ();
-	this->mutex_pool.unlock();
 }

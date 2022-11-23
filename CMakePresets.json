@@ -1,0 +1,50 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 6,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "description": "Default build using Ninja generator",
+      "generator": "Ninja"
+    },
+    {
+      "name": "debug",
+      "inherits": "default",
+      "description": "Debug build using Ninja generator",
+      "binaryDir": "${sourceDir}/cmake/debug",
+      "cacheVariables": {
+        "STH_BUILD_EXAMPLES": "ON",
+        "STH_GENERATE_DOCS": "OFF",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "default",
+      "description": "Release build using Ninja generator",
+      "binaryDir": "${sourceDir}/cmake/release",
+      "cacheVariables": {
+        "STH_BUILD_EXAMPLES": "OFF",
+        "STH_GENERATE_DOCS": "OFF",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "docs",
+      "displayName": "Docs Config",
+      "description": "Default docs config using Doxygen",
+      "binaryDir": "${sourceDir}/cmake/docs",
+	  "generator": "Ninja",
+      "cacheVariables": {
+        "STH_BUILD_EXAMPLES": "OFF",
+        "STH_GENERATE_DOCS": "ON"
+      }
+    }
+  ],
+  "buildPresets": []
+}

@@ -10,9 +10,8 @@
 #include <cstdint>
 #include <queue>
 #include <future>
+#include <functional>
 #include <memory>
-#include <sys/types.h>
-#include <thread>
 #include <type_traits>
 
 namespace sth {
@@ -102,14 +101,13 @@ public:
 	 * @return std::future<return_type_t> future to get task result
 	 */
 	template <typename Func, typename... Args>
-	auto add_task (Priority priority, Func&& func, Args&&... args) -> std::future<std::invoke_result_t<Func, Args...>> {
-		using return_type_t = std::invoke_result_t<Func, Args...>;
-		auto f = std::make_shared<std::packaged_task<return_type_t()>>(
-				std::bind(std::forward<Func>(func),
-				std::forward<Args>(args)...));
-		Task task{[f] () { (*f)(); }, priority};
-		this->add_to_queue(task);
-		return f->get_future();
+	auto addTask (Func&& func, Args&&... args) -> std::future<std::invoke_result_t<Func, Args...>> {
+        using returnType = std::invoke_result_t<Func, Args...>;
+        auto task = std::make_shared<std::packaged_task<returnType()>>(
+                std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
+
+        this->addToQueue([task] () { (*task)(); });
+        return task->get_future();
 	}
 };
 
