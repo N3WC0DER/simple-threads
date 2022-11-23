@@ -45,6 +45,6 @@ The library file will be located along the path `./cmake/<preset name>/libsimple
 
 ## Contributing
 
-Please read ['CONTRIBUTING.md'](https://github.com/N3WC0DER/simple-threads/blob/master/CONTRIBUTING.md) for details on how to contribute to this project.
+Please read [`CONTRIBUTING.md`](https://github.com/N3WC0DER/simple-threads/blob/master/CONTRIBUTING.md) for details on how to contribute to this project.
 
 Happy coding!
