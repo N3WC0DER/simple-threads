@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <thread>
-#include <unistd.h>
 #include <mutex>
 #include <chrono>
 
@@ -27,7 +26,7 @@ int add(int a, int b) {
 }
 
 struct A {
-	void operator()(const std::string str) {
+	void operator()(const std::string& str) {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << str << std::endl;
 	}
@@ -35,11 +34,11 @@ struct A {
 
 class B {
 private:
-	int b[10];
+	int b[10] {};
 public:
 	B() {
-		for (int i = 0; i < 10; i++)
-				b[i] = rand() % 100;
+		for (int& i : b)
+				i = rand() % 100;
 	}
 	
 	int& operator()(const int i) {
@@ -49,8 +48,8 @@ public:
 	
 	void print() const {
 		std::scoped_lock<std::mutex> lock(mutex);
-		for (int i = 0; i < 10; i++)
-				std::cout << b[i] << " ";
+		for (const int i : b)
+				std::cout << i << " ";
 		std::cout << std::endl;
 	}
 };
@@ -88,7 +87,8 @@ int main() {
 	
 	// Unary functor and member function
 	B b;
-	thm->add_task(Priority::HIGHEST, &B::print, &b); // Do not forget that a non-static member function takes as its first argument a reference to the object from which it is called.
+	thm->add_task(Priority::HIGHEST, &B::print, &b); // Do not forget that a non-static member function
+	                                                             // takes as its first argument a reference to the object from which it is called.
 	
 	auto future3 = thm->add_task(Priority::HIGHEST, b, 3);
 
@@ -100,23 +100,25 @@ int main() {
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	};
 
+	// The following examples are not always executed in the order in which they were intended.
+	// Use synchronization tools to organize the correct order.
 
-	thm->add_task(sth::Priority::HIGHEST, l);
-	thm->add_task(sth::Priority::HIGHEST, l);
-	thm->add_task(sth::Priority::HIGHEST, l);
-	thm->add_task(sth::Priority::HIGHEST, l);
+	thm->add_task(Priority::HIGHEST, l);
+	thm->add_task(Priority::HIGHEST, l);
+	thm->add_task(Priority::HIGHEST, l);
+	thm->add_task(Priority::HIGHEST, l);
 
-	thm->add_task(sth::Priority::MEDIUM, [] () {
+	thm->add_task(Priority::MEDIUM, [] () {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "Second output" << std::endl;
 	});
 
-	thm->add_task(sth::Priority::HIGHEST, [] () {
+	thm->add_task(Priority::HIGHEST, [] () {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "First output" << std::endl;
 	});
 
 	thm->wait_all();
-	thm->free();
+	sth::ThreadManager::free();
 	return 0;
 }

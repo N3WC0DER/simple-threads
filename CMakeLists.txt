@@ -4,8 +4,11 @@
 cmake_minimum_required(VERSION 3.6.0)
 project(simple-threads
         LANGUAGES CXX
-        VERSION 0.1.1
+        VERSION 1.0.0
         DESCRIPTION "Simple thread control")
+
+option(STH_BUILD_EXAMPLES "Build ${PROJECT_NAME} examples" OFF)
+option(STH_GENERATE_DOCS "Generate ${PROJECT_NAME} docs" OFF)
 
 if (STH_GENERATE_DOCS)
     add_subdirectory(doc)
@@ -14,9 +17,6 @@ else()
 
 	add_library(${PROJECT_NAME})
 	add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-
-	option(STH_BUILD_EXAMPLES "Build ${PROJECT_NAME} examples" OFF)
-	option(STH_GENERATE_DOCS "Generate ${PROJECT_NAME} docs" OFF)
 
 	target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
