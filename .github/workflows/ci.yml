@@ -1,0 +1,82 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.platform }} ${{ matrix.type }}
+    runs-on: ${{ matrix.platform.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-latest, macos-11]
+        type: [release, debug]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure CMake
+      shell: bash
+      run: cmake --preset=${{ matrix.type }}
+
+    - name: Build
+      shell: bash
+      run: cmake --build ${{github.workspace}}/cmake/${{ matrix.type}}
+
+    - name: Tests
+      if: matrix.type == release
+      shell: bash
+      run: ctest --preset=test
+  
+  format:
+    name: Formatting code with clang-format
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Install dependencies
+      shell: bash
+      run: sudo apt-get install clang-format
+    
+    - name: Format code
+      shell: bash
+      run: clang-format -i $GITHUB_WORKSPACE/include/* $GITHUB_WORKSPACE/src/* $GITHUB_WORKSPACE/tests/* $GITHUB_WORKSPACE/examples/*
+      
+    - name: Check Formatting
+      run: git diff --exit-code
+  
+  tidy:
+    name: Analyzing on platform ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Install macOS Dependencies
+      if: runner.os == 'macOS'
+      run: |
+        brew install llvm
+        echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
+    
+    - name: Analyze code
+      run: clang-tidy $GITHUB_WORKSPACE/src/* $GITHUB_WORKSPACE/include/* $GITHUB_WORKSPACE/tests/* $GITHUB_WORKSPACE/examples/*
+    
+    
+    
+    
+    
+    
+    
