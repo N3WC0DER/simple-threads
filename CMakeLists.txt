@@ -3,16 +3,17 @@
 
 cmake_minimum_required(VERSION 3.6.0)
 project(simple-threads
-        LANGUAGES CXX
+        LANGUAGES CXX C
         VERSION 0.1.0
         DESCRIPTION "Simple thread control")
 
 option(STH_BUILD_EXAMPLES "Build ${PROJECT_NAME} examples" OFF)
 option(STH_GENERATE_DOCS "Generate ${PROJECT_NAME} docs" OFF)
+option(STH_BUILD_TESTS "Build ${PROJECT_NAME} tests by using Google Test framework" OFF)
 
 if (STH_GENERATE_DOCS)
     add_subdirectory(doc)
-else()
+else ()
 	get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
 
 	add_library(${PROJECT_NAME})
@@ -32,7 +33,12 @@ else()
 
 	install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 
-	if(STH_BUILD_EXAMPLES)
+	if (STH_BUILD_EXAMPLES)
 		add_subdirectory(examples)
-	endif()
-endif()
+	endif ()
+
+	if (STH_BUILD_TESTS)
+		enable_testing()
+		add_subdirectory(tests)
+	endif ()
+endif ()

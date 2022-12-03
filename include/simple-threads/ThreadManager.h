@@ -6,13 +6,14 @@
  */
 
 #pragma once
+#include <type_traits>
+
 #include <cstddef>
 #include <cstdint>
-#include <queue>
-#include <future>
 #include <functional>
+#include <future>
 #include <memory>
-#include <type_traits>
+#include <queue>
 
 namespace sth {
 
@@ -27,7 +28,7 @@ class ThreadManager {
 private:
 	/** The Task class contains std::function and execution priority. Required for comparing priority in std::priority_queue */
 	struct Task {
-		std::function<void ()> func;
+		std::function<void()> func;
 		Priority priority;
 
 		/* for std::priority_queue */
@@ -46,34 +47,34 @@ private:
 	explicit ThreadManager(size_t thread_count);
 	// void operator delete(void*);
 	/* PLEASE DON'T USE OPERATOR DELETE!! */
-	
+
 	/** Flag that specifies the state of the ThreadManager */
 	std::atomic<bool> enabled;
-	
+
 	/** The queue from which threads take tasks */
 	std::priority_queue<Task> task_pool;
 	/** This mutex synchronizes the task queue */
 	std::mutex mutex_pool;
 	/** condition_variable makes threads wait for a new task to be added if the queue is empty */
 	std::condition_variable cv_pool;
-	
+
 	/** Array of threads that execute tasks */
 	std::vector<std::thread> thread_pool;
-	
+
 	/** Number of active threads */
 	std::atomic<size_t> thread_count = 0;
 
 	/** Number of threads waiting for tasks */
 	std::atomic<size_t> thread_ready = 0;
-	
+
 	static std::unique_ptr<ThreadManager> instance;
-	
+
 	/** Adding a function task to the queue */
 	void add_to_queue(const ThreadManager::Task& task);
-	
+
 	/** A function that threads perform to execute tasks from a queue */
 	void run();
-	
+
 	/** Pulling a task from the queue */
 	ThreadManager::Task get_task();
 
@@ -82,7 +83,7 @@ public:
 	ThreadManager& operator=(const ThreadManager&) = delete;
 	/** Destructor where threads end and are freed */
 	~ThreadManager();
-	
+
 	/** 
 	 * @param size_t thread_count The number of threads to be used. By default - the maximum possible number at which parallelism will be maintained
 	 */
@@ -95,20 +96,22 @@ public:
 
 	/** Clearing the queue of tasks */
 	void clear_queue();
-	
+
 	/**
 	 * Function to convert tasks to std::packaged_task 
 	 * @return std::future<return_type_t> future to get task result
 	 */
-	template <typename Func, typename... Args>
-	auto add_task (Priority priority, Func&& func, Args&&... args) -> std::future<std::invoke_result_t<Func, Args...>> {
-        using return_type_t = std::invoke_result_t<Func, Args...>;
-        auto task = std::make_shared<std::packaged_task<return_type_t()>>
-				(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
+	template<typename Func, typename... Args>
+	auto add_task(Priority priority, Func&& func, Args&&... args) -> std::future<std::invoke_result_t<Func, Args...>> {
+		using return_type_t = std::invoke_result_t<Func, Args...>;
+		auto task = std::make_shared<std::packaged_task<return_type_t()>>(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
 
-        this->add_to_queue(Task {[task] () { (*task)(); }, priority});
-        return task->get_future();
+		this->add_to_queue(Task {[task]() {
+			(*task)();
+		                         },
+		                         priority});
+		return task->get_future();
 	}
 };
 
-} // namespace sth
+}  // namespace sth

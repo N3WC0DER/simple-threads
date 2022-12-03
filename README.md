@@ -1,6 +1,16 @@
 # simple-threads
 
+<div align="center">
+
 ![flow](https://cdn.searchenginejournal.com/wp-content/uploads/2021/09/leveraging-flow-for-marketers-amplify-your-productivity-6131ec1d805a8-sej-1520x800.jpg)
+
+![](https://badgen.net/github/tag/N3WC0DER/simple-threads)
+![](https://badgen.net/github/license/N3WC0DER/simple-threads)
+![](https://badgen.net/github/stars/N3WC0DER/simple-threads)
+
+![](https://badgen.net/github/checks/N3WC0DER/simple-threads/master)
+
+</div>
 
 ## Introduction 
 
@@ -110,6 +120,17 @@ Finally, the static `free()` function deletes the ThreadManager instance and cle
 tmanager->wait_all(); // To wait for a task
 
 ThreadManager::free(); // For deleting instance
+```
+
+## Tests
+
+To run tests, you first need to build the project using the release preset, then run them:
+
+```shell
+cmake --preset release
+ninja -C cmake/release
+
+ctest --preset tests
 ```
 
 ## Contributing

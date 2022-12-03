@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6.0)
-project(simple-threads-examples LANGUAGES CXX)
+project(simple-threads-examples LANGUAGES CXX C)
 include("../cmake/utils.cmake")
 
 string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -16,7 +16,3 @@ add_executable(${PROJECT_NAME})
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 target_sources(${PROJECT_NAME} PRIVATE ${sources})
 target_link_libraries(${PROJECT_NAME} PRIVATE simple-threads::simple-threads)
-
-if(NOT is_top_level)
-    win_copy_deps_to_target_dir(${PROJECT_NAME} simple-threads::simple-threads)
-endif()

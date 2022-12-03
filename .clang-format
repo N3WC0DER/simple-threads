@@ -11,14 +11,14 @@ AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortLambdasOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: true
-  AfterClass: true
+  AfterClass: false
   AfterControlStatement: Never
   AfterEnum: false
   AfterFunction: false
@@ -35,7 +35,23 @@ BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
+EmptyLineBeforeAccessModifier: LogicalBlock
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:        2
+    SortPriority:    2
+    CaseSensitive:   true
+  - Regex:           '^((<|")(gtest|gmock|isl|json)/)'
+    Priority:        3
+  - Regex:           '<[[:alnum:].]+>'
+    Priority:        4
+  - Regex:           '.*'
+    Priority:        1
+    SortPriority:    0
 ColumnLimit: 0
+LambdaBodyIndentation: OuterScope
 CompactNamespaces: false
 ContinuationIndentWidth: 8
 IndentCaseLabels: true
@@ -56,13 +72,31 @@ SpaceBeforeCpp11BracedList: true
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
+SpaceBeforeCaseColon: false
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterFunctionDeclarationName: false
+  AfterFunctionDefinitionName: false
+  AfterOverloadedOperator: false
+  BeforeNonEmptyParentheses: false
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
 SpaceBeforeRangeBasedForLoopColon: false
 SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 0
+SpacesBeforeTrailingComments: 2
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1
 SpacesInAngles: Never
 SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
+QualifierAlignment: Left
+ReferenceAlignment: Pointer
+SeparateDefinitionBlocks: Always
+SortIncludes: CaseInsensitive
+SortUsingDeclarations: true
 TabWidth: 4
 UseTab: AlignWithSpaces
+Standard: c++17

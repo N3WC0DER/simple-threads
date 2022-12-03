@@ -15,10 +15,12 @@
     {
       "name": "debug",
       "inherits": "default",
+      "displayName": "Debug config",
       "description": "Debug build using Ninja generator",
       "binaryDir": "${sourceDir}/cmake/debug",
       "cacheVariables": {
         "STH_BUILD_EXAMPLES": "ON",
+		"STH_BUILD_TESTS": "OFF",
         "STH_GENERATE_DOCS": "OFF",
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -26,10 +28,12 @@
     {
       "name": "release",
       "inherits": "default",
+      "displayName": "Release config",
       "description": "Release build using Ninja generator",
       "binaryDir": "${sourceDir}/cmake/release",
       "cacheVariables": {
         "STH_BUILD_EXAMPLES": "OFF",
+		"STH_BUILD_TESTS": "ON",
         "STH_GENERATE_DOCS": "OFF",
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -42,9 +46,18 @@
 	  "generator": "Ninja",
       "cacheVariables": {
         "STH_BUILD_EXAMPLES": "OFF",
+		"STH_BUILD_TESTS": "ON",
         "STH_GENERATE_DOCS": "ON"
       }
     }
   ],
-  "buildPresets": []
+  "testPresets": [
+    {
+      "name": "tests",
+	  "description": "Tests by using Google Test framework",
+      "configurePreset": "release",
+      "output": {"outputOnFailure": true, "shortProgress": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    }
+  ]
 }

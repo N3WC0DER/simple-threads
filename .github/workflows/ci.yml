@@ -1,0 +1,66 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.platform }} ${{ matrix.type }}
+    runs-on: ${{ matrix.platform }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-22.04, macos-11]
+        type: [release, debug]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install ninja-build clang-14
+      
+    - name: Install MacOS dependencies
+      if: runner.os == 'MacOS'
+      run: brew install ninja
+
+    - name: Configure CMake
+      run: cmake --preset=${{ matrix.type }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+
+    - name: Build
+      shell: bash
+      run: cmake --build $GITHUB_WORKSPACE/cmake/${{ matrix.type }}
+
+    - name: Tests
+      if: matrix.type == 'release'
+      run: ctest --preset=tests
+  
+  format:
+    name: Formatting code with clang-format-14
+    runs-on: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Install dependencies
+      run: sudo apt-get install clang-14
+    
+    - name: Format code
+      shell: bash
+      run: |
+        find . -regex '.*\.\(cpp\|hpp\|h\|cxx\)' -exec clang-format-14 -style=file -i {} \;
+      
+    - name: Check Formatting
+      run: git diff --exit-code
+    
+    
+    
+    
+    
+    
+    
