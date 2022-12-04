@@ -19,7 +19,7 @@
 ## TO-DO list
 
 - [x] Priority
-- [ ] Add CI/CD pipeline
+- [x] Add CI pipeline
 - [ ] Waiting or completing tasks (optional) when ThreadManger shutdown
 - [ ] Abstract class Thread for infinite loops
 - [ ] Class Worker that contains and manages std::thread

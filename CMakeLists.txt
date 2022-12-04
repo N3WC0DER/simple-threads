@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6.0)
 project(simple-threads
         LANGUAGES CXX C
-        VERSION 0.1.0
+        VERSION 1.0.0
         DESCRIPTION "Simple thread control")
 
 option(STH_BUILD_EXAMPLES "Build ${PROJECT_NAME} examples" OFF)
