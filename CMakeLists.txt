@@ -1,6 +1,3 @@
-# Sorry, but I'm still not very strong in the CMake project build system.
-# I try my best to make it convenient for other people to use my library!
-
 cmake_minimum_required(VERSION 3.6.0)
 project(simple-threads
         LANGUAGES CXX C
