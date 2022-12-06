@@ -1,12 +1,12 @@
 #include "simple-threads/ThreadManager.h"
 
-using namespace sth;
+namespace sth {
 
 std::unique_ptr<ThreadManager> ThreadManager::instance = nullptr;
 
 ThreadManager::ThreadManager(size_t thread_count) {
 	if (thread_count <= 0 || thread_count > std::thread::hardware_concurrency())
-		throw std::out_of_range("The number of threads out of range");
+		throw std::invalid_argument("The number of threads out of range");
 
 	this->enabled.store(true);
 
@@ -68,21 +68,25 @@ ThreadManager::Task ThreadManager::get_task() {
 }
 
 void ThreadManager::init(size_t thread_count) {
-	if (instance != nullptr)
-		throw std::runtime_error("Error initialize ThreadManager");
+	if (instance)
+		throw std::logic_error("Error initialize ThreadManager");
 
 	instance.reset(new ThreadManager(thread_count));
 }
 
 ThreadManager* ThreadManager::get_instance() {
-	if (instance == nullptr)
-		throw std::runtime_error("ThreadManager not initialize");
+	if (!instance)
+		throw std::logic_error("ThreadManager not initialize");
 
 	return instance.get();
 }
 
 void ThreadManager::free() {
 	instance.reset();
+}
+
+bool ThreadManager::is_init() noexcept {
+	return instance ? true : false;
 }
 
 void ThreadManager::wait_all() {
@@ -96,3 +100,5 @@ void ThreadManager::clear_queue() {
 	this->task_pool = std::priority_queue<Task>();
 	this->mutex_pool.unlock();
 }
+
+} // namespace sth

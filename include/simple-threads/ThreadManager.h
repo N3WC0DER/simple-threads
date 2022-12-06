@@ -14,6 +14,7 @@
 #include <future>
 #include <memory>
 #include <queue>
+#include <stdexcept>
 
 namespace sth {
 
@@ -90,6 +91,8 @@ public:
 	static void init(size_t thread_count = std::thread::hardware_concurrency());
 	static ThreadManager* get_instance();
 	static void free();
+
+	static bool is_init() noexcept;
 
 	/** Blocking wait for all threads to finish */
 	void wait_all();

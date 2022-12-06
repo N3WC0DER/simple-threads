@@ -6,7 +6,8 @@ struct ThreadManagerTest : public ::testing::Test {
 	sth::ThreadManager* tmanager = nullptr;
 
 	void SetUp() override {
-		sth::ThreadManager::init(2);
+		if (!sth::ThreadManager::is_init())
+			sth::ThreadManager::init(2);
 		this->tmanager = sth::ThreadManager::get_instance();
 	}
 

@@ -56,25 +56,27 @@ public:
 };
 
 int main() {
-	ThreadManager::init(4);
-	ThreadManager* thm = ThreadManager::get_instance();
+	if (!ThreadManager::is_init())
+		ThreadManager::init(4);
+
+	ThreadManager* tmanager = ThreadManager::get_instance();
 
 	// Void function without parameters
-	thm->add_task(Priority::HIGHEST, &void_func_without_param);
+	tmanager->add_task(Priority::HIGHEST, &void_func_without_param);
 
 	// Lambda without parameters
-	thm->add_task(Priority::HIGHEST, [] {
+	tmanager->add_task(Priority::HIGHEST, [] {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "lambda function" << std::endl;
 	});
 
 	// A function with two parameters that returns their sum
-	auto future = thm->add_task(Priority::HIGHEST, &add, 5, 10);
+	auto future = tmanager->add_task(Priority::HIGHEST, &add, 5, 10);
 	std::cout << future.get() << std::endl;
 
 	// A lambda with two parameters that return their sum in the third parameter
 	int res;
-	auto future2 = thm->add_task(
+	auto future2 = tmanager->add_task(
 			Priority::HIGHEST, [](int a, int b, int& result) {
 				result = a + b;
 			},
@@ -86,18 +88,18 @@ int main() {
 
 	// Unary functor
 	A a;
-	thm->add_task(Priority::HIGHEST, a, "Functor");
+	tmanager->add_task(Priority::HIGHEST, a, "Functor");
 
 	// Unary functor and member function
 	B b;
-	thm->add_task(Priority::HIGHEST, &B::print, &b);  // Do not forget that a non-static member function
+	tmanager->add_task(Priority::HIGHEST, &B::print, &b);  // Do not forget that a non-static member function
 													  // takes as its first argument a reference to the object from which it is called.
 
-	auto future3 = thm->add_task(Priority::HIGHEST, b, 3);
+	auto future3 = tmanager->add_task(Priority::HIGHEST, b, 3);
 
 	std::cout << future3.get() << std::endl;
 
-	thm->add_task(Priority::HIGHEST, &B::print, &b);
+	tmanager->add_task(Priority::HIGHEST, &B::print, &b);
 
 	auto l = []() {
 		std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -106,22 +108,25 @@ int main() {
 	// The following examples are not always executed in the order in which they were intended.
 	// Use synchronization tools to organize the correct order.
 
-	thm->add_task(Priority::HIGHEST, l);
-	thm->add_task(Priority::HIGHEST, l);
-	thm->add_task(Priority::HIGHEST, l);
-	thm->add_task(Priority::HIGHEST, l);
+	tmanager->add_task(Priority::HIGHEST, l);
+	tmanager->add_task(Priority::HIGHEST, l);
+	tmanager->add_task(Priority::HIGHEST, l);
+	tmanager->add_task(Priority::HIGHEST, l);
 
-	thm->add_task(Priority::MEDIUM, []() {
+	tmanager->add_task(Priority::MEDIUM, []() {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "Second output" << std::endl;
 	});
 
-	thm->add_task(Priority::HIGHEST, []() {
+	tmanager->add_task(Priority::HIGHEST, []() {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "First output" << std::endl;
 	});
+	
+	// Waiting completing tasks and shutdown ThreadManager
+	tmanager->wait_all();
+	if (ThreadManager::is_init())
+		ThreadManager::free();
 
-	thm->wait_all();
-	sth::ThreadManager::free();
 	return 0;
 }
