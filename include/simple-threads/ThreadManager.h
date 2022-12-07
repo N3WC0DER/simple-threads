@@ -44,6 +44,7 @@ private:
 	/** 
 	 * The constructor is needed to initialize threads 
 	 * @param size_t thread_count number of threads to be created
+	 * @throw std::invalid_argument
 	 */
 	explicit ThreadManager(size_t thread_count);
 	// void operator delete(void*);
@@ -89,8 +90,14 @@ public:
 	 * @param size_t thread_count The number of threads to be used. By default - the maximum possible number at which parallelism will be maintained
 	 */
 	static void init(size_t thread_count = std::thread::hardware_concurrency());
+	/**
+	 * @throw std::logic_error
+	 */
 	static ThreadManager* get_instance();
-	static void free();
+	/**
+	 * @throw std::logic_error
+	 */
+	static void release();
 
 	static bool is_init() noexcept;
 
@@ -109,10 +116,7 @@ public:
 		using return_type_t = std::invoke_result_t<Func, Args...>;
 		auto task = std::make_shared<std::packaged_task<return_type_t()>>(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
 
-		this->add_to_queue(Task {[task]() {
-			(*task)();
-		                         },
-		                         priority});
+		this->add_to_queue(Task {[task]() {(*task)();}, priority});
 		return task->get_future();
 	}
 };

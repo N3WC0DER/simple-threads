@@ -5,8 +5,8 @@ namespace sth {
 std::unique_ptr<ThreadManager> ThreadManager::instance = nullptr;
 
 ThreadManager::ThreadManager(size_t thread_count) {
-	if (thread_count <= 0 || thread_count > std::thread::hardware_concurrency())
-		throw std::invalid_argument("The number of threads out of range");
+	if (thread_count <= 0 || thread_count > MAXIMUM_THREAD_COUNT)
+		throw std::invalid_argument("The number of threads is invalid");
 
 	this->enabled.store(true);
 
@@ -69,19 +69,21 @@ ThreadManager::Task ThreadManager::get_task() {
 
 void ThreadManager::init(size_t thread_count) {
 	if (instance)
-		throw std::logic_error("Error initialize ThreadManager");
-
-	instance.reset(new ThreadManager(thread_count));
+		throw std::logic_error("Error initialize ThreadManager: instance is init");
+	auto temp = new ThreadManager(thread_count);
+	instance.reset(temp);
 }
 
 ThreadManager* ThreadManager::get_instance() {
 	if (!instance)
-		throw std::logic_error("ThreadManager not initialize");
+		throw std::logic_error("Error getting instance ThreadManager: instance is not init");
 
 	return instance.get();
-}
+} 
 
-void ThreadManager::free() {
+void ThreadManager::release() {
+	if (!instance)
+		throw std::logic_error("Instance release error: nothing to free");
 	instance.reset();
 }
 

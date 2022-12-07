@@ -8,6 +8,7 @@
 #include "simple-threads/ThreadManager.h"
 
 #include <chrono>
+#include <exception>
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -125,8 +126,12 @@ int main() {
 	
 	// Waiting completing tasks and shutdown ThreadManager
 	tmanager->wait_all();
+	
+	// In fact, the following code is completely unnecessary, 
+	// since, after the completion of the main () function, 
+	// the ThreadManager destructor is automatically called
 	if (ThreadManager::is_init())
-		ThreadManager::free();
+		ThreadManager::release();
 
 	return 0;
 }
