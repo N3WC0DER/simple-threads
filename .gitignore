@@ -2,3 +2,4 @@ cmake/*
 CMakeUserPresets.json
 doc/html/
 doc/latex/
+.format.sh

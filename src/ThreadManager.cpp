@@ -4,34 +4,35 @@ namespace sth {
 
 std::unique_ptr<ThreadManager> ThreadManager::instance = nullptr;
 
-ThreadManager::ThreadManager(size_t thread_count) {
-	if (thread_count <= 0 || thread_count > MAXIMUM_THREAD_COUNT)
+ThreadManager::ThreadManager(size_t threadCount) {
+	if (threadCount <= 0 || threadCount > MAXIMUM_THREAD_COUNT)
 		throw std::invalid_argument("The number of threads is invalid");
 
 	this->enabled.store(true);
 
 	// Creating and launch all threads
-	this->thread_count.store(thread_count);
-	for (size_t i = 0; i < thread_count; i++) {
-		this->thread_pool.emplace_back(&ThreadManager::run, this);
+	this->threadCount.store(threadCount);
+	for (size_t i = 0; i < threadCount; i++) {
+		this->threadPool.emplace_back(&ThreadManager::run, this);
 	}
 }
 
 ThreadManager::~ThreadManager() {
 	this->enabled.store(false);
-
-	this->clear_queue();
+	
+	this->waitAll();
+	this->clearQueue();
 
 	// Notify all threads and wait end of their work
-	for (auto& thread: this->thread_pool) {
+	for (auto& thread: this->threadPool) {
 		this->cv_pool.notify_all();
 		thread.join();
 	}
 }
 
-void ThreadManager::add_to_queue(const ThreadManager::Task& task) {
+void ThreadManager::addToQueue(const ThreadManager::Task& task) {
 	std::scoped_lock<std::mutex> lock(this->mutex_pool);
-	this->task_pool.push(task);
+	this->taskPool.push(task);
 
 	// Notify only one thread to start executing a task
 	this->cv_pool.notify_one();
@@ -41,45 +42,45 @@ void ThreadManager::run() {
 	while (this->enabled.load()) {
 		std::unique_lock<std::mutex> lock(this->mutex_pool);
 
-		this->thread_ready.fetch_add(1);
+		this->threadReady.fetch_add(1);
 
 		// Waiting for notification
 		this->cv_pool.wait(lock, [this]() -> bool {
-			return !this->task_pool.empty() || !this->enabled.load();
+			return !this->taskPool.empty() || !this->enabled.load();
 		});
 
-		this->thread_ready.fetch_sub(1);
+		this->threadReady.fetch_sub(1);
 
-		if (this->task_pool.empty())
+		if (this->taskPool.empty())
 			continue;
 
-		auto task = this->get_task();
+		auto task = this->getTask();
 		lock.unlock();
 
 		task.func();
 	}
 }
 
-ThreadManager::Task ThreadManager::get_task() {
-	auto task = this->task_pool.top();
-	this->task_pool.pop();
+ThreadManager::Task ThreadManager::getTask() {
+	auto task = this->taskPool.top();
+	this->taskPool.pop();
 
 	return task;
 }
 
-void ThreadManager::init(size_t thread_count) {
+void ThreadManager::init(size_t threadCount) {
 	if (instance)
 		throw std::logic_error("Error initialize ThreadManager: instance is init");
-	auto temp = new ThreadManager(thread_count);
-	instance.reset(temp);
+
+	instance.reset(new ThreadManager(threadCount));
 }
 
-ThreadManager* ThreadManager::get_instance() {
+ThreadManager* ThreadManager::getInstance() {
 	if (!instance)
 		throw std::logic_error("Error getting instance ThreadManager: instance is not init");
 
 	return instance.get();
-} 
+}
 
 void ThreadManager::release() {
 	if (!instance)
@@ -87,19 +88,19 @@ void ThreadManager::release() {
 	instance.reset();
 }
 
-bool ThreadManager::is_init() noexcept {
+bool ThreadManager::isInit() noexcept {
 	return instance ? true : false;
 }
 
-void ThreadManager::wait_all() {
-	while (!this->task_pool.empty() || this->thread_ready.load() != this->thread_count.load()) {
+void ThreadManager::waitAll() {
+	while (!this->taskPool.empty() || this->threadReady.load() != this->threadCount.load()) {
 		std::this_thread::yield();
 	}
 }
 
-void ThreadManager::clear_queue() {
+void ThreadManager::clearQueue() {
 	this->mutex_pool.lock();
-	this->task_pool = std::priority_queue<Task>();
+	this->taskPool = std::priority_queue<Task>();
 	this->mutex_pool.unlock();
 }
 
