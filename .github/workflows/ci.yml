@@ -52,15 +52,7 @@ jobs:
     
     - name: Format code
       shell: bash
-      run: |
-        find . -regex '.*\.\(cpp\|hpp\|h\|cxx\)' -exec clang-format-14 -style=file -i {} \;
+      run: find . -regex '.*\.\(cpp\|hpp\|h\|cxx\)' -exec clang-format-14 -style=file -i {} \;
       
     - name: Check Formatting
       run: git diff --exit-code
-    
-    
-    
-    
-    
-    
-    

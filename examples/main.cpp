@@ -8,17 +8,18 @@
 #include "simple-threads/ThreadManager.h"
 
 #include <chrono>
+#include <cstdio>
+#include <exception>
 #include <iostream>
 #include <mutex>
-#include <thread>
 
 using namespace sth;
 
 std::mutex mutex;
 
-void void_func_without_param() {
+void voidFuncWithoutParam() {
 	std::scoped_lock<std::mutex> lock(mutex);
-	std::cout << "void_func_without_param()" << std::endl;
+	std::cout << "voidFuncWithoutParam()" << std::endl;
 }
 
 int add(int a, int b) {
@@ -56,25 +57,27 @@ public:
 };
 
 int main() {
-	ThreadManager::init(4);
-	ThreadManager* thm = ThreadManager::get_instance();
+	if (!ThreadManager::isInit())
+		ThreadManager::init(4);
 
+	ThreadManager* tmanager = ThreadManager::getInstance();
+	
 	// Void function without parameters
-	thm->add_task(Priority::HIGHEST, &void_func_without_param);
+	tmanager->addTask(Priority::HIGHEST, &voidFuncWithoutParam);
 
 	// Lambda without parameters
-	thm->add_task(Priority::HIGHEST, [] {
+	tmanager->addTask(Priority::HIGHEST, [] {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "lambda function" << std::endl;
 	});
 
 	// A function with two parameters that returns their sum
-	auto future = thm->add_task(Priority::HIGHEST, &add, 5, 10);
+	auto future = tmanager->addTask(Priority::HIGHEST, &add, 5, 10);
 	std::cout << future.get() << std::endl;
 
 	// A lambda with two parameters that return their sum in the third parameter
 	int res;
-	auto future2 = thm->add_task(
+	auto future2 = tmanager->addTask(
 			Priority::HIGHEST, [](int a, int b, int& result) {
 				result = a + b;
 			},
@@ -86,18 +89,18 @@ int main() {
 
 	// Unary functor
 	A a;
-	thm->add_task(Priority::HIGHEST, a, "Functor");
+	tmanager->addTask(Priority::HIGHEST, a, "Functor");
 
 	// Unary functor and member function
 	B b;
-	thm->add_task(Priority::HIGHEST, &B::print, &b);  // Do not forget that a non-static member function
-													  // takes as its first argument a reference to the object from which it is called.
+	tmanager->addTask(Priority::HIGHEST, &B::print, &b);  // Do not forget that a non-static member function
+														   // takes as its first argument a reference to the object from which it is called.
 
-	auto future3 = thm->add_task(Priority::HIGHEST, b, 3);
+	auto future3 = tmanager->addTask(Priority::HIGHEST, b, 3);
 
 	std::cout << future3.get() << std::endl;
 
-	thm->add_task(Priority::HIGHEST, &B::print, &b);
+	tmanager->addTask(Priority::HIGHEST, &B::print, &b);
 
 	auto l = []() {
 		std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -106,22 +109,30 @@ int main() {
 	// The following examples are not always executed in the order in which they were intended.
 	// Use synchronization tools to organize the correct order.
 
-	thm->add_task(Priority::HIGHEST, l);
-	thm->add_task(Priority::HIGHEST, l);
-	thm->add_task(Priority::HIGHEST, l);
-	thm->add_task(Priority::HIGHEST, l);
+	tmanager->addTask(Priority::HIGHEST, l);
+	tmanager->addTask(Priority::HIGHEST, l);
+	tmanager->addTask(Priority::HIGHEST, l);
+	tmanager->addTask(Priority::HIGHEST, l);
 
-	thm->add_task(Priority::MEDIUM, []() {
+	tmanager->addTask(Priority::MEDIUM, []() {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "Second output" << std::endl;
 	});
 
-	thm->add_task(Priority::HIGHEST, []() {
+	tmanager->addTask(Priority::HIGHEST, []() {
 		std::scoped_lock<std::mutex> lock(mutex);
 		std::cout << "First output" << std::endl;
 	});
 
-	thm->wait_all();
-	sth::ThreadManager::free();
+	// Waiting completing tasks and shutdown ThreadManager
+	// (This member is called in the destructor, so it won't have any effect
+	tmanager->waitAll();
+
+	// In fact, the following code is completely unnecessary,
+	// since, after the completion of the main () function,
+	// the ThreadManager destructor is automatically called
+	if (ThreadManager::isInit())
+		ThreadManager::release();
+
 	return 0;
 }

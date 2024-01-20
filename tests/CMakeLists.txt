@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6.0)
+cmake_minimum_required(VERSION 3.25.0)
 project(simple-threads-tests)
 
 include(../cmake/utils.cmake)
@@ -20,6 +20,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(${PROJECT_NAME} main.cpp)
+file(GLOB_RECURSE SRCS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+
+add_executable(${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE ${SRCS})
 target_link_libraries(${PROJECT_NAME} PRIVATE gtest_main simple-threads::simple-threads)
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

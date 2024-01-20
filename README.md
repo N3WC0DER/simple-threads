@@ -27,7 +27,7 @@
 
 ## Build
 
-> To build, you need the latest versions of Git, CMake version, at least 3.6.0, Ninja, and any compiler of your choice (MinGW, GCC, etc.) supporting the C++17 standard.
+> To build, you need the latest versions of Git, CMake version, at least 3.25.1, Ninja, and any compiler of your choice (MinGW, GCC, etc.) supporting the C++20 standard.
 
 ```shell
 git clone https://github.com/N3WC0DER/simple-threads.git

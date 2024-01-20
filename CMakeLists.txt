@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6.0)
+cmake_minimum_required(VERSION 3.25.0)
 project(simple-threads
         LANGUAGES CXX C
         VERSION 1.0.0
@@ -11,8 +11,6 @@ option(STH_BUILD_TESTS "Build ${PROJECT_NAME} tests by using Google Test framewo
 if (STH_GENERATE_DOCS)
     add_subdirectory(doc)
 else ()
-	get_directory_property(IS_SUBPROJECT PARENT_DIRECTORY)
-
 	add_library(${PROJECT_NAME})
 	add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -24,11 +22,9 @@ else ()
 			"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
 			"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
-	file(GLOB SRCS "${PROJECT_SOURCE_DIR}/src/*")
+	file(GLOB_RECURSE SRCS "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
 	target_sources(${PROJECT_NAME} PRIVATE ${SRCS})
-
-	install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
 
 	if (STH_BUILD_EXAMPLES)
 		add_subdirectory(examples)
